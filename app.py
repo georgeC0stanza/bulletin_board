@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
+app.config["DEBUG"] = True
 app.config[
     "SQLALCHEMY_DATABASE_URI"
 ] = "postgresql://postgres:david@localhost:5432/bulletin_board"
@@ -66,10 +67,11 @@ def hello():
 
 @app.route("/add", methods=["POST"])
 def add_bulletin():
-    title = request.args.get("title")
-    body = request.args.get("body")
-    published = request.args.get("published")
-    user_id = request.args.get("user_id")
+    title = request.form.get("title")
+    body = request.form.get("body")
+    published = request.form.get("published")
+    user_id = request.form.get("user_id")
+    print(request.form.get("user_id"))
     try:
         bulletin = Bulletin(
             title=title, body=body, published=published, user_id=user_id
@@ -83,7 +85,13 @@ def add_bulletin():
 
 @app.route("/bulletins")
 def bulletins():
-    return render_template("bulletins.html")
+    # return render_template("bulletins.html")
+    try:
+        bulletin = Bulletin.query.all()
+        print([e for e in bulletin])
+        return jsonify([e.serialize() for e in bulletin])
+    except Exception as e:
+        return str(e)
 
 
 @app.route("/new")

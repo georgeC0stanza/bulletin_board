@@ -3,11 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:david@localhost:5432/bulletin_board"
+app.config[
+    "SQLALCHEMY_DATABASE_URI"
+] = "postgresql://postgres:david@localhost:5432/bulletin_board"
 db = SQLAlchemy(app)
 
+## This was in models.py, but I had to pull it out because I was spending too much time with errors..
 class Bulletin(db.Model):
-    __tablename__ = 'bulletin'
+    __tablename__ = "bulletin"
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String())
@@ -22,18 +25,19 @@ class Bulletin(db.Model):
         self.user_id = user_id
 
     def __repr__(self):
-        return '<id {}>'.format(self.id)
-    
+        return "<id {}>".format(self.id)
+
     def serialize(self):
         return {
-            'id': self.id, 
-            'title': self.title,
-            'body': self.body,
-            'published': self.published
+            "id": self.id,
+            "title": self.title,
+            "body": self.body,
+            "published": self.published,
         }
 
+
 class User(db.Model):
-    __tablename__ = 'user'
+    __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
@@ -42,47 +46,55 @@ class User(db.Model):
         self.name = name
 
     def __repr__(self):
-        return '<id {}>'.format(self.id)
-    
+        return "<id {}>".format(self.id)
+
     def serialize(self):
         return {
-            'id': self.id, 
-            'name': self.name,
+            "id": self.id,
+            "name": self.name,
         }
+
+
+with app.app_context():
+    db.create_all()
+
 
 @app.route("/")
 def hello():
     return "Hello World!"
 
+
 @app.route("/add", methods=["POST"])
 def add_bulletin():
-    title=request.args.get('title')
-    body=request.args.get('body')
-    published=request.args.get('published')
+    title = request.args.get("title")
+    body = request.args.get("body")
+    published = request.args.get("published")
+    user_id = request.args.get("user_id")
     try:
-        bulletin=Bulletin(
-            title=title,
-            body=body,
-            published=published,
-            user_id=user_id
+        bulletin = Bulletin(
+            title=title, body=body, published=published, user_id=user_id
         )
         db.session.add(bulletin)
         db.session.commit()
         return "Bulletin added. id={}".format(bulletin.id)
     except Exception as e:
-	    return(str(e))
+        return str(e)
 
-@app.route('/bulletins')
+
+@app.route("/bulletins")
 def bulletins():
-    return render_template('bulletins.html')
+    return render_template("bulletins.html")
 
-@app.route('/new')
+
+@app.route("/new")
 def createBulletin():
-    return render_template('create.html')
+    return render_template("create.html")
 
-@app.route('/edit')
+
+@app.route("/edit")
 def editBulletin():
-    return render_template('edit.html')
+    return render_template("edit.html")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run()

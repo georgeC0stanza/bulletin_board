@@ -1,7 +1,8 @@
-#from app import db
+# from app import db
+
 
 class Bulletin(db.Model):
-    __tablename__ = 'bulletin'
+    __tablename__ = "bulletin"
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String())
@@ -16,18 +17,20 @@ class Bulletin(db.Model):
         self.user_id = user_id
 
     def __repr__(self):
-        return '<id {}>'.format(self.id)
-    
+        return "<id {}>".format(self.id)
+
     def serialize(self):
         return {
-            'id': self.id, 
-            'title': self.title,
-            'body': self.body,
-            'published': self.published
+            "id": self.id,
+            "title": self.title,
+            "body": self.body,
+            "published": self.published,
+            "user_id": self.user_id,
         }
 
+
 class User(db.Model):
-    __tablename__ = 'user'
+    __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
@@ -36,10 +39,10 @@ class User(db.Model):
         self.name = name
 
     def __repr__(self):
-        return '<id {}>'.format(self.id)
-    
+        return "<id {}>".format(self.id)
+
     def serialize(self):
         return {
-            'id': self.id, 
-            'name': self.name,
+            "id": self.id,
+            "name": self.name,
         }

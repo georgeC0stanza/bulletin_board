@@ -71,7 +71,6 @@ def add_bulletin():
     body = request.form.get("body")
     published = request.form.get("published")
     user_id = request.form.get("user_id")
-    print(request.form.get("user_id"))
     try:
         bulletin = Bulletin(
             title=title, body=body, published=published, user_id=user_id
@@ -88,7 +87,6 @@ def bulletins():
     # return render_template("bulletins.html")
     try:
         bulletin = Bulletin.query.all()
-        print([e for e in bulletin])
         return jsonify([e.serialize() for e in bulletin])
     except Exception as e:
         return str(e)
